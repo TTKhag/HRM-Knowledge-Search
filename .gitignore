@@ -1,0 +1,13 @@
+node_modules
+dist
+*.local
+.DS_Store
+# Không đưa tài liệu nghiệp vụ / file backup lên repository
+*.docx
+*.doc
+*.pdf
+*.xlsx
+*.xls
+*.txt.bak
+hrm-backup-*.json
+!package-lock.json
