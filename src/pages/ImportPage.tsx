@@ -46,7 +46,8 @@ export default function ImportPage() {
       try {
         const r = await importFile(it.file, it.module);
         if (r.kind === 'duplicate') patch(it.key, { status: 'duplicate', message: `Trùng với tài liệu đã có: "${r.existingName}". Đã bỏ qua.` });
-        else patch(it.key, { status: 'done', message: `Đã lưu ${r.segments} đoạn nội dung.` });
+        else if (r.kind === 'attached') patch(it.key, { status: 'done', message: `Tài liệu đã có ("${r.existingName}"): đã bổ sung file gốc để xem đúng định dạng.` });
+        else patch(it.key, { status: 'done', message: `Đã lưu ${r.segments} đoạn nội dung${r.originalSaved ? ' và file gốc.' : '. Không lưu được file gốc (có thể hết dung lượng trình duyệt), chỉ xem được bản trích xuất.'}` });
       } catch (e) {
         patch(it.key, { status: 'error', message: errMsg(e) });
       }
