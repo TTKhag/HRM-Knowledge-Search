@@ -3,3 +3,9 @@
 @tailwind utilities;
 
 html, body { background: #f9fafb; }
+
+/* Xem bản gốc */
+.hrm-hit { background: rgba(255, 224, 0, 0.5); border-radius: 2px; }
+.hrm-mark { background: #fde047; color: inherit; }
+.hrm-target { outline: 2px solid #1f4e8c; outline-offset: 2px; }
+.hrm-target-row > td { background-color: #eef2f8; }
