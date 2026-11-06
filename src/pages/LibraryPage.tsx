@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Alert, Badge, Card, ExtBadge, btnDanger, btnSecondary, selectCls } from '../components/ui';
 import { IconTrash } from '../components/Icons';
@@ -10,6 +10,14 @@ import { errMsg, formatDate, formatSize, normalize } from '../utils/text';
 
 export default function LibraryPage() {
   const { data: docs, error } = useLive(() => db.documents.orderBy('importedAt').reverse().toArray());
+  const { data: originalIds } = useLive(async () => (await db.blobs.toCollection().primaryKeys()) as number[]);
+  const hasOriginal = useMemo(() => new Set(originalIds ?? []), [originalIds]);
+  const [usage, setUsage] = useState<string | null>(null);
+  useEffect(() => {
+    navigator.storage?.estimate?.().then((e) => {
+      if (e.usage !== undefined && e.quota) setUsage(`Dung lượng trình duyệt đã dùng: ${formatSize(e.usage)} / ${formatSize(e.quota)}`);
+    }).catch(() => undefined);
+  }, [docs]);
   const [name, setName] = useState('');
   const [module, setModule] = useState('');
   const [msg, setMsg] = useState<{ kind: 'error' | 'success'; text: string } | null>(null);
@@ -45,7 +53,7 @@ export default function LibraryPage() {
       </div>
       {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
       {error && <Alert kind="error">Lỗi đọc dữ liệu: {error}</Alert>}
-      <p className="text-sm text-gray-600">{list.length}/{docs?.length ?? 0} tài liệu</p>
+      <p className="text-sm text-gray-600">{list.length}/{docs?.length ?? 0} tài liệu{usage ? ` · ${usage}` : ''}</p>
 
       <Card className="divide-y divide-gray-100 !p-0">
         {list.length === 0 && <p className="p-4 text-sm text-gray-500">{docs?.length ? 'Không có tài liệu khớp bộ lọc.' : <>Thư viện trống. <Link to="/import" className="text-navy-700 underline">Import tài liệu</Link>.</>}</p>}
@@ -55,6 +63,7 @@ export default function LibraryPage() {
               <Link to={`/tai-lieu/${d.id}`} className="block truncate font-medium text-navy-800 hover:underline">{d.name}</Link>
               <span className="text-xs text-gray-500">{formatSize(d.size)} · {d.segmentCount} đoạn · import {formatDate(d.importedAt)}</span>
             </div>
+            {hasOriginal.has(d.id as number) && <Badge tone="gray">Có bản gốc</Badge>}
             <ExtBadge ext={d.ext} /> <Badge>{d.module}</Badge>
             <Link to={`/tai-lieu/${d.id}`} className={btnSecondary + ' !px-3 !py-1'}>Xem</Link>
             <button className="rounded p-2 text-red-700 hover:bg-red-50" onClick={() => remove(d.id as number, d.name)} aria-label={`Xóa ${d.name}`}><IconTrash className="h-4 w-4" /></button>
