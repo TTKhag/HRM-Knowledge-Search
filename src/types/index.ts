@@ -36,6 +36,8 @@ export interface SearchHit {
   segmentId: number;
   docId: number;
   score: number;
+  /** Độ liên quan 30–100 (%). */
+  relevance: number;
   module: string;
   ext: FileExt;
 }
