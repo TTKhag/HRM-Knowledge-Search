@@ -38,6 +38,15 @@ export interface SearchHit {
   score: number;
   /** Độ liên quan 30–100 (%). */
   relevance: number;
+  /** Thứ tự lần xuất hiện trong đoạn (mỗi lần xuất hiện là một kết quả riêng). */
+  occurrence: number;
+  /** Số từ liền nhau khớp được. */
+  len: number;
+  /** Vị trí ký tự của lần xuất hiện này trong đoạn. */
+  start: number;
+  end: number;
+  /** Mọi lần xuất hiện tốt nhất trong đoạn (để tô sáng đoạn trích). */
+  ranges: { start: number; end: number }[];
   module: string;
   ext: FileExt;
 }
