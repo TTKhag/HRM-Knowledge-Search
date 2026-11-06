@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "dexie": "^4.4.7",
+    "docx-preview": "^0.4.1",
     "mammoth": "^1.13.0",
     "minisearch": "^7.2.0",
     "pdfjs-dist": "^4.4.168",
