@@ -6,6 +6,7 @@ import { Alert, Badge, Card, ExtBadge, btnSecondary, selectCls } from '../compon
 import { useSearch } from '../hooks/useSearch';
 import { EXT_LABEL, MODULES, SUPPORTED_EXTS } from '../utils/constants';
 import { makeSnippet, queryTerms } from '../utils/text';
+import { relevanceLabel } from '../utils/ranking';
 
 export default function SearchPage() {
   const [params, setParams] = useSearchParams();
@@ -44,7 +45,7 @@ export default function SearchPage() {
       {q && loading && <p className="text-sm text-gray-600">Đang tìm…</p>}
       {q && !loading && !error && (
         <p className="text-sm text-gray-600">
-          {results.length ? <>Tìm thấy <strong>{results.length}</strong> kết quả (xếp theo độ phù hợp){results.length >= 100 ? ', hiển thị tối đa 100' : ''}.</> : 'Không tìm thấy kết quả phù hợp.'}
+          {results.length ? <>Tìm thấy <strong>{results.length}</strong> kết quả có độ liên quan từ 30% trở lên (xếp từ liên quan cao xuống thấp){results.length >= 100 ? ', hiển thị tối đa 100' : ''}.</> : 'Không tìm thấy kết quả phù hợp.'}
         </p>
       )}
 
@@ -55,6 +56,7 @@ export default function SearchPage() {
               <div className="flex flex-wrap items-center gap-2">
                 <Link to={`/tai-lieu/${r.docId}`} className="font-semibold text-navy-800 hover:underline">{r.docName}</Link>
                 <Badge>{r.module}</Badge> <ExtBadge ext={r.ext} />
+                <span className="ml-auto text-xs font-medium text-navy-700" title={relevanceLabel(r.relevance)}>Khớp {r.relevance}% · {relevanceLabel(r.relevance)}</span>
               </div>
               <p className="text-xs text-gray-600">Vị trí: {r.label}</p>
               <p className="whitespace-pre-line break-words text-sm leading-relaxed text-gray-800">
