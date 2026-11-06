@@ -22,7 +22,7 @@ export default function HomePage() {
     <div className="space-y-6">
       <section className="pt-4 md:pt-8">
         <h2 className="mb-1 text-xl font-semibold text-navy-800">Tra cứu tài liệu nghiệp vụ HRM</h2>
-        <p className="mb-4 text-sm text-gray-600">Tìm nội dung bên trong các tài liệu đã import. Hỗ trợ gõ tiếng Việt có dấu hoặc không dấu.</p>
+        <p className="mb-4 text-sm text-gray-600">Tìm kiếm nội dung bên trong các tài liệu đã import. Hỗ trợ gõ tiếng Việt có dấu hoặc không dấu.</p>
         <SearchBar large onSubmit={go} />
         <p className="mt-3 text-sm text-gray-600">
           Đã import: <strong className="text-navy-800">{data?.total ?? 0}</strong> tài liệu
