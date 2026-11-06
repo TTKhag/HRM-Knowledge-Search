@@ -8,5 +8,11 @@ export const MODULES = [
 export const SUPPORTED_EXTS: FileExt[] = ['docx', 'pdf', 'xlsx', 'txt'];
 export const ACCEPT = '.docx,.pdf,.xlsx,.txt';
 export const EXT_LABEL: Record<FileExt, string> = { docx: 'DOCX', pdf: 'PDF', xlsx: 'XLSX', txt: 'TXT' };
+export const MIME_BY_EXT: Record<FileExt, string> = {
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  pdf: 'application/pdf',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  txt: 'text/plain',
+};
 export const MAX_SEGMENT_CHARS = 1200;
 export const MAX_RESULTS = 100;
