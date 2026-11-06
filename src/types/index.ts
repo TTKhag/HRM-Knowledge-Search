@@ -20,6 +20,13 @@ export interface SegmentRecord {
   text: string;
 }
 
+/** File gốc của tài liệu (khóa chính = id tài liệu). */
+export interface OriginalRecord {
+  docId: number;
+  type: string;
+  blob: Blob;
+}
+
 export interface ExtractedSegment {
   label: string;
   text: string;
@@ -41,10 +48,18 @@ export interface SearchResult extends SearchHit {
 
 export interface BackupFile {
   app: 'hrm-knowledge-search';
-  version: 1;
+  version: 1 | 2;
   exportedAt: string;
   documents: DocRecord[];
   segments: SegmentRecord[];
+  /** Từ version 2: file gốc mã hóa base64. */
+  files?: BackupOriginal[];
+}
+
+export interface BackupOriginal {
+  docId: number;
+  type: string;
+  data: string;
 }
 
 export type ImportStatus = 'waiting' | 'processing' | 'done' | 'duplicate' | 'error';
