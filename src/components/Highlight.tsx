@@ -1,25 +1,38 @@
 import { Fragment, useMemo } from 'react';
-import { findRanges } from '../utils/text';
+import { phraseRanges, type TokMode } from '../utils/ranking';
+import type { Range } from '../utils/text';
 
-/** Tô sáng từ khóa (không phân biệt dấu/hoa thường). Không dùng dangerouslySetInnerHTML. */
-export default function Highlight({ text, terms }: { text: string; terms: string[] }) {
+interface Props {
+  text: string;
+  /** Truy vấn: chỉ tô sáng các chuỗi từ LIỀN NHAU (>= minLen từ), không tô từ lẻ. */
+  query?: string;
+  minLen?: number;
+  mode?: TokMode;
+  /** Hoặc truyền sẵn các khoảng cần tô sáng. */
+  ranges?: Range[];
+}
+
+/** Tô sáng cụm từ (không phân biệt dấu/hoa thường). Mỗi lần xuất hiện có data-occ = thứ tự trong đoạn. */
+export default function Highlight({ text, query = '', minLen = 1, mode = 'text', ranges }: Props) {
+  const rs = useMemo(() => ranges ?? (query ? phraseRanges(text, query, minLen, mode) : []), [text, query, minLen, mode, ranges]);
   const parts = useMemo(() => {
-    const ranges = findRanges(text, terms);
-    const out: { s: string; hit: boolean }[] = [];
+    const out: { s: string; hit: number }[] = [];
     let pos = 0;
-    for (const r of ranges) {
-      if (r.start > pos) out.push({ s: text.slice(pos, r.start), hit: false });
-      out.push({ s: text.slice(r.start, r.end), hit: true });
+    rs.forEach((r, k) => {
+      if (r.start > pos) out.push({ s: text.slice(pos, r.start), hit: -1 });
+      out.push({ s: text.slice(r.start, r.end), hit: k });
       pos = r.end;
-    }
-    if (pos < text.length) out.push({ s: text.slice(pos), hit: false });
+    });
+    if (pos < text.length) out.push({ s: text.slice(pos), hit: -1 });
     return out;
-  }, [text, terms]);
+  }, [text, rs]);
 
   return (
     <>
       {parts.map((p, i) =>
-        p.hit ? <mark key={i} data-hit="1" className="bg-yellow-200 text-black px-0.5">{p.s}</mark> : <Fragment key={i}>{p.s}</Fragment>,
+        p.hit >= 0
+          ? <mark key={i} data-hit="1" data-occ={p.hit} className="bg-yellow-200 px-0.5 text-black">{p.s}</mark>
+          : <Fragment key={i}>{p.s}</Fragment>,
       )}
     </>
   );
