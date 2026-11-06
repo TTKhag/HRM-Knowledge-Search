@@ -6,7 +6,8 @@ import { IconBack } from '../components/Icons';
 import type { ViewTarget } from '../components/viewers/types';
 import { getDocument, getOriginal } from '../services/libraryService';
 import { parseLocation } from '../utils/location';
-import { errMsg, formatDate, formatSize, normalize, queryTerms } from '../utils/text';
+import { tokenize } from '../utils/ranking';
+import { errMsg, formatDate, formatSize, queryTerms } from '../utils/text';
 import type { DocRecord, SegmentRecord } from '../types';
 
 const PdfViewer = lazy(() => import('../components/viewers/PdfViewer'));
@@ -59,7 +60,7 @@ export default function ViewerPage() {
   const domNav = mode === 'text' || ext === 'docx';
   const matchSegs = useMemo(() => {
     if (!state || !terms.length || domNav) return [];
-    return state.segments.filter((s) => { const n = normalize(s.text); return terms.some((t) => n.includes(t)); });
+    return state.segments.filter((s) => { const set = new Set(tokenize(s.text).norm); return terms.some((t) => set.has(t)); });
   }, [state, terms, domNav]);
 
   const jump = (dir: 1 | -1) => {
